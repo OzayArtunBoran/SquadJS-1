@@ -53,36 +53,36 @@ export default class DiscordTeamkill extends DiscordBasePlugin {
 
     const fields = [
       {
-        name: "Attacker's Name",
+        name: "Saldırganın Adı",
         value: info.attacker.name,
         inline: true
       },
       {
-        name: "Attacker's SteamID",
+        name: "Saldırganın SteamID",
         value: `[${info.attacker.steamID}](https://steamcommunity.com/profiles/${info.attacker.steamID})`,
         inline: true
       },
       {
-        name: "Attacker's EosID",
+        name: "Saldırganın EosID",
         value: info.attacker.eosID,
         inline: true
       },
       {
-        name: 'Weapon',
+        name: 'Silah',
         value: info.weapon
       },
       {
-        name: "Victim's Name",
+        name: "Kurbanın Adı",
         value: info.victim.name,
         inline: true
       },
       {
-        name: "Victim's SteamID",
+        name: "Kurbanın SteamID",
         value: `[${info.victim.steamID}](https://steamcommunity.com/profiles/${info.victim.steamID})`,
         inline: true
       },
       {
-        name: "Victim's EosID",
+        name: "Kurbanın EosID",
         value: info.victim.eosID,
         inline: true
       }
@@ -91,7 +91,7 @@ export default class DiscordTeamkill extends DiscordBasePlugin {
     if (!this.options.disableCBL)
       fields.push({
         name: 'Community Ban List',
-        value: `[Attacker's Bans](https://communitybanlist.com/search/${info.attacker.steamID})`
+        value: `[Saldırganın Yasakları](https://communitybanlist.com/search/${info.attacker.steamID})`
       });
 
     await this.sendDiscordMessage({

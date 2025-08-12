@@ -91,7 +91,8 @@ export default class CBLInfo extends DiscordBasePlugin {
       if (!data.steamUser) {
         this.verbose(
           2,
-          `Player ${info.player.name} (Steam ID: ${info.player.steamID}) is not listed in the Community Ban List.`
+          `Oyuncu, ${info.player.name} (Steam ID: ${info.player.steamID}) CBL'de listelenmemis.` //translate turkish
+          
         );
         return;
       }
@@ -99,14 +100,14 @@ export default class CBLInfo extends DiscordBasePlugin {
       if (data.steamUser.reputationPoints < this.options.threshold) {
         this.verbose(
           2,
-          `Player ${info.player.name} (Steam ID: ${info.player.steamID}) has a reputation below the threshold.`
+          `Oyuncu ${info.player.name} (Steam ID: ${info.player.steamID}) eşik değerinin altında bir itibara sahiptir.`
         );
         return;
       }
 
       await this.sendDiscordMessage({
         embed: {
-          title: `${info.player.name} is a potentially harmful player!`,
+          title: `${info.player.name} potansiyel olarak zararlı bir oyuncu!`,
           author: {
             name: 'Community Ban List',
             url: 'https://communitybanlist.com/',
@@ -115,32 +116,32 @@ export default class CBLInfo extends DiscordBasePlugin {
           thumbnail: {
             url: data.steamUser.avatarFull
           },
-          description: `[${info.player.name}](https://communitybanlist.com/search/${info.player.steamID}) has ${data.steamUser.reputationPoints} reputation points on the Community Ban List and is therefore a potentially harmful player.`,
+          description: `[${info.player.name}](https://communitybanlist.com/search/${info.player.steamID}) CBL'de ${data.steamUser.reputationPoints} itibara sahiptir ve bu nedenle potansiyel olarak zararlı bir oyuncudur.`,
           fields: [
             {
-              name: 'Reputation Points',
+              name: 'Itibar Puanları',
               value: `${data.steamUser.reputationPoints} (${
                 data.steamUser.reputationPointsMonthChange || 0
-              } from this month)`,
+              } bu ay)`,
               inline: true
             },
             {
-              name: 'Risk Rating',
+              name: 'Risk Oranı',
               value: `${data.steamUser.riskRating} / 10`,
               inline: true
             },
             {
-              name: 'Reputation Rank',
+              name: 'İtibar Sıralaması',
               value: `#${data.steamUser.reputationRank}`,
               inline: true
             },
             {
-              name: 'Active Bans',
+              name: 'Aktif Yasaklar',
               value: `${data.steamUser.activeBans.edges.length}`,
               inline: true
             },
             {
-              name: 'Expired Bans',
+              name: 'Süresi Dolmuş Yasaklar',
               value: `${data.steamUser.expiredBans.edges.length}`,
               inline: true
             }
@@ -148,14 +149,14 @@ export default class CBLInfo extends DiscordBasePlugin {
           color: '#ffc40b',
           timestamp: info.time.toISOString(),
           footer: {
-            text: 'Powered by SquadJS and the Community Ban List'
+            text: 'Arthur ve  Community Ban List tarafından sağlandı.',
           }
         }
       });
     } catch (err) {
       this.verbose(
         1,
-        `Failed to fetch Community Ban List data for player ${info.name} (Steam ID: ${info.steamID}): `,
+        `Oyuncu için Topluluk Yasak Listesi verileri alınamadı ${info.name} (Steam ID: ${info.steamID}): `,
         err
       );
     }

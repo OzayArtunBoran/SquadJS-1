@@ -43,12 +43,12 @@ export default class DiscordRoundWinner extends DiscordBasePlugin {
   async onNewGame(info) {
     await this.sendDiscordMessage({
       embed: {
-        title: 'Round Winner',
+        title: 'Round Kazanan',
         color: this.options.color,
         fields: [
           {
-            name: 'Message',
-            value: `${info.winner} won on ${this.server.layerHistory[1].layer.name}.`
+            name: 'Mesaj',
+            value: `${info.winner} ${this.server.layerHistory[1].layer.name} haritasında kazandı.`
           }
         ],
         timestamp: info.time.toISOString()

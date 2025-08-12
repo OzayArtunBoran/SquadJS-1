@@ -44,8 +44,8 @@ export default class DiscordRoundEnded extends DiscordBasePlugin {
     if (!info.winner || !info.loser) {
       await this.sendDiscordMessage({
         embed: {
-          title: 'Round Ended',
-          description: 'This match Ended in a Draw',
+          title: 'Round Bitti',
+          description: 'Bu maç berabere bitti.',
           color: this.options.color,
           timestamp: info.time.toISOString()
         }
@@ -55,23 +55,26 @@ export default class DiscordRoundEnded extends DiscordBasePlugin {
 
     await this.sendDiscordMessage({
       embed: {
-        title: 'Round Ended',
+        title: 'Round Bitti',
         description: `${info.winner.layer} - ${info.winner.level}`,
         color: this.options.color,
         fields: [
           {
-            name: `Team ${info.winner.team} Won`,
-            value: `${info.winner.subfaction}\n ${info.winner.faction}\n won with ${info.winner.tickets} tickets.`
+            name: `Team ${info.winner.team} Kazandı`,
+            value: `${info.winner.subfaction}\n ${info.winner.faction}\n ${info.winner.tickets} biletle kazandı.`
           },
           {
-            name: `Team ${info.loser.team} Lost`,
-            value: `${info.loser.subfaction}\n ${info.loser.faction}\n lost with ${info.loser.tickets} tickets.`
+            name: `Team ${info.loser.team} Kaybetti`,
+            value: `${info.loser.subfaction}\n ${info.loser.faction}\n ${info.loser.tickets} biletle kaybetti.`
           },
           {
-            name: 'Ticket Difference',
+            name: 'Ticket Farkı',
             value: `${info.winner.tickets - info.loser.tickets}.`
           }
         ],
+        footer: {
+          text: 'Oyun sona erdi.'
+        },
         timestamp: info.time.toISOString()
       }
     });

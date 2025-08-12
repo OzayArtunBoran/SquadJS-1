@@ -100,7 +100,7 @@ export default class DiscordAdminRequest extends DiscordBasePlugin {
     if (info.message.length === 0) {
       await this.server.rcon.warn(
         info.player.eosID,
-        `Please specify what you would like help with when requesting an admin.`
+        `Admin talebinde bulunurken, hangi konuda yardım istediğinizi belirtiniz.`
       );
       return;
     }
@@ -116,11 +116,11 @@ export default class DiscordAdminRequest extends DiscordBasePlugin {
 
     const message = {
       embed: {
-        title: `${info.player.name} has requested admin support!`,
+        title: `${info.player.name}, admin desteği talep etti!`,
         color: this.options.color,
         fields: [
           {
-            name: 'Player',
+            name: 'Oyuncu',
             value: info.player.name,
             inline: true
           },
@@ -130,7 +130,7 @@ export default class DiscordAdminRequest extends DiscordBasePlugin {
             inline: true
           },
           {
-            name: "Player's EosID",
+            name: "Oyuncu EosID",
             value: info.player.eosID,
             inline: true
           },
@@ -139,11 +139,11 @@ export default class DiscordAdminRequest extends DiscordBasePlugin {
             value: `Team: ${info.player.teamID}, Squad: ${info.player.squadID || 'Unassigned'}`
           },
           {
-            name: 'Message',
+            name: 'Mesaj',
             value: info.message
           },
           {
-            name: 'Admins Online',
+            name: 'Online Adminler',
             value: amountAdmins
           }
         ],
@@ -173,19 +173,17 @@ export default class DiscordAdminRequest extends DiscordBasePlugin {
     if (amountAdmins === 0 && this.options.showInGameAdmins)
       await this.server.rcon.warn(
         info.player.eosID,
-        `There are no in-game admins, however, an admin has been notified via Discord. Please wait for us to get back to you.`
+        `Oyun içinde yönetici bulunmamaktadır, ancak Discord üzerinden bir yöneticiye bildirimde bulunulmuştur. Lütfen size geri dönüş yapmamızı bekleyin.`
       );
     else if (this.options.showInGameAdmins)
       await this.server.rcon.warn(
         info.player.eosID,
-        `There ${amountAdmins > 1 ? 'are' : 'is'} ${amountAdmins} in-game admin${
-          amountAdmins > 1 ? 's' : ''
-        }. Please wait for us to get back to you.`
-      );
+        `Oyun içinde ${amountAdmins > 1 ? 'yönetici var' : 'yönetici var'} - ${amountAdmins} yönetici. Lütfen size geri dönüş yapmamızı bekleyin.` 
+      );  
     else
       await this.server.rcon.warn(
         info.player.eosID,
-        `An admin has been notified. Please wait for us to get back to you.`
+        `Bir yöneticiye bildirimde bulunulmuştur. Lütfen size geri dönüş yapmamızı bekleyin.`
       );
   }
 }

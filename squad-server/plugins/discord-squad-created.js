@@ -72,7 +72,7 @@ export default class DiscordSquadCreated extends DiscordBasePlugin {
       });
     } else {
       await this.sendDiscordMessage(
-        ` \`\`\`Player: ${info.player.name}\n created Squad ${info.player.squadID} : ${info.squadName}\n on ${info.teamName}\`\`\` `
+        ` \`\`\`Oyuncu: ${info.player.name}\n Kurduğu squad ${info.player.squadID} : ${info.squadName}\n Takım :  ${info.teamName}\`\`\` ` // 
       );
     }
   }
