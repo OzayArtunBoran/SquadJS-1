@@ -156,6 +156,23 @@ export default class SquadServer extends EventEmitter {
 
     this.rcon.on('SQUAD_CREATED', async (data) => {
       data.player = await this.getPlayerByEOSID(data.playerEOSID, true);
+      if (!data.player) {
+        for (const [key, value] of Object.entries(data)) {
+          if (key.startsWith('player') && key.endsWith('ID') && key !== 'playerEOSID') {
+            data.player = await this.getPlayerByAnyID(value, true);
+            if (data.player) break;
+          }
+        }
+        if (!data.player) {
+          Logger.verbose(
+            'SquadServer',
+            1,
+            'Warning: Could not resolve player for SQUAD_CREATED event',
+            data
+          );
+          return;
+        }
+      }
       data.player.squadID = data.squadID;
 
       delete data.playerName;

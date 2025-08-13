@@ -46,6 +46,7 @@ export default class DiscordSquadCreated extends DiscordBasePlugin {
   }
 
   async onSquadCreated(info) {
+    if (!info.player) return;
     if (this.options.useEmbed) {
       await this.sendDiscordMessage({
         embed: {
@@ -72,7 +73,7 @@ export default class DiscordSquadCreated extends DiscordBasePlugin {
       });
     } else {
       await this.sendDiscordMessage(
-        ` \`\`\`Oyuncu: ${info.player.name}\n Kurduğu squad ${info.player.squadID} : ${info.squadName}\n Takım :  ${info.teamName}\`\`\` ` // 
+        ` \`\`\`Oyuncu: ${info.player.name}\n Kurduğu squad ${info.player.squadID} : ${info.squadName}\n Takım :  ${info.teamName}\`\`\` ` //
       );
     }
   }
