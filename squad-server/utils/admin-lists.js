@@ -29,6 +29,7 @@ export default async function fetchAdminLists(adminLists) {
         }
         case 'local': {
           const listPath = path.resolve(__dirname, '../../../', list.source);
+          
           if (!fs.existsSync(listPath)) throw new Error(`Could not find Admin List at ${listPath}`);
           data = fs.readFileSync(listPath, 'utf8');
           break;
@@ -79,7 +80,7 @@ export default async function fetchAdminLists(adminLists) {
         const group = groups[`${idx}-${m.groups.groupID}`];
         const perms = {};
         for (const groupPerm of group) perms[groupPerm.toLowerCase()] = true;
-
+        
         const adminID = m.groups.adminID;
         if (adminID in admins) {
           admins[adminID] = Object.assign(admins[adminID], perms);

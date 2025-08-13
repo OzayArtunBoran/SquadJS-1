@@ -1,5 +1,5 @@
 import DiscordBasePlugin from './discord-base-plugin.js';
-
+import Logger from '../../core/logger.js';
 export default class DiscordAdminRequest extends DiscordBasePlugin {
   static get description() {
     return (
@@ -105,11 +105,16 @@ export default class DiscordAdminRequest extends DiscordBasePlugin {
       return;
     }
 
-    const admins = this.server.getAdminsWithPermission('canseeadminchat', 'eosID');
+    const admins = this.server.getAdminsWithPermission('canseeadminchat');
+    
+    
     let amountAdmins = 0;
     for (const player of this.server.players) {
-      if (!admins.includes(player.eosID)) continue;
+
+      
+      if (!admins.includes(player.steamID)) continue;
       amountAdmins++;
+      
       if (this.options.warnInGameAdmins)
         await this.server.rcon.warn(player.eosID, `[${info.player.name}] - ${info.message}`);
     }
