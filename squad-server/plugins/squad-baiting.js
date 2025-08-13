@@ -346,6 +346,15 @@ export default class SquadBaiting extends DiscordBasePlugin {
         this.resetPlayerCounters(steamID)
     }
     async onPlayerConnected(info) {
+        if (!info.player) {
+            if (info.eosID) {
+                info.player = await this.server.getPlayerByEOSID(info.eosID, true);
+            }
+            if (!info.player) {
+                this.verbose(1, 'Player data missing; aborting baiting logic');
+                return;
+            }
+        }
         const { steamID, name: playerName, teamID } = info.player;
         this.resetPlayerCounters(steamID)
     }
