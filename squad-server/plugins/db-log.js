@@ -674,11 +674,18 @@ export default class DBLog extends BasePlugin {
   }
 
   async onPlayerConnected(info) {
+    const player = info.player || (await this.server.getPlayerByEOSID(info.eosID, true));
+
+    if (!player) {
+      this.verbose(1, `Warning: Could not find player with EOSID ${info.eosID}`);
+      return;
+    }
+
     await this.models.Player.upsert(
       {
-        eosID: info.player.eosID,
-        steamID: info.player.steamID,
-        lastName: info.player.name,
+        eosID: player.eosID,
+        steamID: player.steamID,
+        lastName: player.name,
         lastIP: info.ip
       },
       {
