@@ -157,17 +157,19 @@ export default class SquadBaiting extends DiscordBasePlugin {
         setInterval(async () => {
             if (this.server.players.length < this.options.playerThreshold) return;
             this.verbose(1, `Players: ${this.server.players.length}/${this.options.playerThreshold}`)
+            if (!this.server.rcon.connected) return;
 
-            const playerRegex = /ID: ([0-9]+) \| Online IDs: EOS: (?<eosID>[0-9a-f]{32}) steam: (?<steamID>\d{17}) \| Name: (?<name>.*?) \| Team ID: (?<teamID>[0-9]+) \| Squad ID: (?<squadID>[0-9]+|N\/A) \| Is Leader: (?<isLeader>True|False) \| Role: (?<role>[^\s]*)/;
-            const players = (await this.server.rcon.execute('ListPlayers')).split('\n').map(e => playerRegex.exec(e)?.groups).filter(e => e != null);
+            try {
+                const playerRegex = /ID: ([0-9]+) \| Online IDs: EOS: (?<eosID>[0-9a-f]{32}) steam: (?<steamID>\d{17}) \| Name: (?<name>.*?) \| Team ID: (?<teamID>[0-9]+) \| Squad ID: (?<squadID>[0-9]+|N\/A) \| Is Leader: (?<isLeader>True|False) \| Role: (?<role>[^\s]*)/;
+                const players = (await this.server.rcon.execute('ListPlayers')).split('\n').map(e => playerRegex.exec(e)?.groups).filter(e => e != null);
 
-            const newSquads = (await this.getSquads()).map(e => ({
-                ...e,
-                leader: JSON.parse(JSON.stringify(players.find(p => p.squadID == e.squadID && p.teamID == e.teamID && p.isLeader == 'True'))),
-                players: players.filter(p => p.squadID == e.squadID && p.teamID == e.teamID),
-                sqUid: `${e.teamID};${e.squadID};${e.squadName};${e.creatorEOSID}`
-            }));
-            oldSquads.forEach(async s => {
+                const newSquads = (await this.getSquads()).map(e => ({
+                    ...e,
+                    leader: JSON.parse(JSON.stringify(players.find(p => p.squadID == e.squadID && p.teamID == e.teamID && p.isLeader == 'True'))),
+                    players: players.filter(p => p.squadID == e.squadID && p.teamID == e.teamID),
+                    sqUid: `${e.teamID};${e.squadID};${e.squadName};${e.creatorEOSID}`
+                }));
+                oldSquads.forEach(async s => {
                 // this.verbose(1, 'Squad info', s)
                 const sqUid = s.sqUid;
                 const match = newSquads.find(ns => ns.sqUid == s.sqUid)
@@ -227,9 +229,13 @@ export default class SquadBaiting extends DiscordBasePlugin {
 
                     this.onSquadBaiting(s, match, sqUid)
                 }
-            })
+                })
 
-            oldSquads = [ ...newSquads ];
+                oldSquads = [ ...newSquads ];
+            } catch (err) {
+                this.verbose(1, 'RCON query failed', err);
+                return;
+            }
         }, 5000)
     }
 
