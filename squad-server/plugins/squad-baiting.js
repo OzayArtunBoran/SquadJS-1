@@ -347,9 +347,9 @@ export default class SquadBaiting extends DiscordBasePlugin {
     }
 
     async onPlayerDisconnected(info) {
-        const { steamID, name: playerName, teamID } = info.player;
+        const { eosID, name: playerName, teamID } = info.player;
         // this.verbose(1, 'Disconnected', steamID, playerName, info)
-        this.resetPlayerCounters(steamID)
+        this.resetPlayerCounters(eosID)
     }
     async onPlayerConnected(info) {
         if (!info.player) {
@@ -361,12 +361,12 @@ export default class SquadBaiting extends DiscordBasePlugin {
                 return;
             }
         }
-        const { steamID, name: playerName, teamID } = info.player;
-        this.resetPlayerCounters(steamID)
+        const { eosID, name: playerName, teamID } = info.player;
+        this.resetPlayerCounters(eosID)
     }
 
-    resetPlayerCounters(steamID) {
-        this.playerBaiting.set(steamID, 0)
+    resetPlayerCounters(eosID) {
+        this.playerBaiting.set(eosID, 0)
     }
 
     async onNewGame(info) {

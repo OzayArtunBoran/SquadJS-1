@@ -28,7 +28,7 @@ export default class ChatCommands extends BasePlugin {
           {
             command: 'squadjs',
             type: 'warn',
-            response: 'This server is powered by SquadJS.',
+            response: 'Black owLs Gaming Community',
             ignoreChats: []
           }
         ]

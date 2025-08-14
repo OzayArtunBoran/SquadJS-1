@@ -18,7 +18,7 @@ export default class IntervalledBroadcasts extends BasePlugin {
         required: false,
         description: 'Messages to broadcast.',
         default: [],
-        example: ['This server is powered by SquadJS.']
+        example: ['Black owLs Gaming Community.']
       },
       interval: {
         required: false,
