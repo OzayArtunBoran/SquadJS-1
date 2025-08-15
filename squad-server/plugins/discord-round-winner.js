@@ -41,6 +41,11 @@ export default class DiscordRoundWinner extends DiscordBasePlugin {
   }
 
   async onNewGame(info) {
+    const prevLayer = this.server.layerHistory[1]?.layer?.name;
+    const message = prevLayer
+      ? `${info.winner} ${prevLayer} haritasında kazandı.`
+      : `${info.winner} kazandı.`;
+
     await this.sendDiscordMessage({
       embed: {
         title: 'Round Kazanan',
@@ -48,7 +53,7 @@ export default class DiscordRoundWinner extends DiscordBasePlugin {
         fields: [
           {
             name: 'Mesaj',
-            value: `${info.winner} ${this.server.layerHistory[1].layer.name} haritasında kazandı.`
+            value: message
           }
         ],
         timestamp: info.time.toISOString()
