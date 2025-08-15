@@ -237,6 +237,14 @@
       "waitTimeOnNewGame": 30
     },
     {
+      "plugin": "SeedThresholdWarn",
+      "enabled": true,
+      "initialThreshold": 34,
+      "seedGoal": 44,
+      "messageTemplate": "Aramıza biri daha katıldı, Seed bitmesine ${currentPlayerCount} / ${seedGoal}",
+      "cooldownMs": 0
+    },
+    {
       "plugin": "SocketIOAPI",
       "enabled": false,
       "websocketPort": "",
