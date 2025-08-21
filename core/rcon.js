@@ -255,6 +255,19 @@ export default class Rcon extends EventEmitter {
   }
 
   connect() {
+    if (this.client.connecting || this.connected) {
+      Logger.verbose('RCON', 1, 'Ignoring connect attempt while socket is busy.');
+      return Promise.resolve();
+    }
+
+    if (this.client.destroyed) {
+      this.client.removeAllListeners();
+      this.client = new net.Socket();
+      this.client.on('data', this.decodeData);
+      this.client.on('close', this.onClose);
+      this.client.on('error', this.onError);
+    }
+
     return new Promise((resolve, reject) => {
       Logger.verbose('RCON', 1, `Connecting to: ${this.host}:${this.port}`);
 
@@ -298,6 +311,9 @@ export default class Rcon extends EventEmitter {
       const onClose = () => {
         this.client.removeListener('error', onError);
 
+        this.connected = false;
+        this.loggedin = false;
+
         Logger.verbose('RCON', 1, `Disconnected from: ${this.host}:${this.port}`);
 
         resolve();
@@ -305,6 +321,9 @@ export default class Rcon extends EventEmitter {
 
       const onError = (err) => {
         this.client.removeListener('close', onClose);
+
+        this.connected = false;
+        this.loggedin = false;
 
         Logger.verbose('RCON', 1, `Failed to disconnect from: ${this.host}:${this.port}`, err);
 
@@ -320,6 +339,7 @@ export default class Rcon extends EventEmitter {
       clearTimeout(this.autoReconnectTimeout);
 
       this.client.end();
+      if (!this.client.destroyed) this.client.destroy();
     });
   }
 
