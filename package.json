@@ -21,6 +21,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@leventhan/battlemetrics": "^1.5.7",
     "squad-server": "1.0.0"
   },
   "devDependencies": {
