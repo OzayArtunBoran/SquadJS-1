@@ -1,7 +1,6 @@
 import DiscordBasePlugin from './discord-base-plugin.js';
 import BM from "@leventhan/battlemetrics";
 import axios from 'axios';
-import EmbedBuilder from 'discord.js';
 export default class SquadLeaderHL extends DiscordBasePlugin {
     static get description() {
         return (
@@ -129,49 +128,33 @@ export default class SquadLeaderHL extends DiscordBasePlugin {
     }
 
     async onSquadCreate(info) {
-        const structure = {
-            title: 'Squad Leader Hour Limit',
-            footer: {
-                text: 'a',
-                url: '',
-            },
-            color: 16761867,
-            image: { url: '' },
-        };
-
-        const embed = new EmbedBuilder(structure);
+        let message = '';
         info.steamID = info.player.steamID;
         if (this.status) {
             if (this.blackList.includes(info.steamID) || this.options.blacklist.includes(info.steamID)) return this.server.rcon.warn(info.steamID, "Squad Lider olmanız bu sunucuda yasaktır. Nedenini öğrenmek için : discord.blackowls.net , #📞・admin-i̇letişim ");
-            const structure = this.options.embed ? this.options.embed : this.options.embed.default;
             const player = this.playerCache.find(x => x.steamID === info.steamID);
             if (this.options.manualWhitelist.includes(info.steamID)) return;
             const { playTime, isPassed } = await this.isPlayerPassedBarrier(info.steamID);
             if (!isPassed) {
                 this.server.rcon.execute(`AdminDisbandSquad ${info.player.teamID} ${info.player.squadID}`);
                 this.server.rcon.warn(info.player.steamID, `Minimum saat limiti olan ${this.options.minimumLimit} saate ulaşamadığınız için mangadan atıldınız.`);
-                embed.setDescription(`${info.player.name}, minimum saat limiti olan ${this.options.minimumLimit} saate ulaşamadığı için takımdan atıldı.`);
-
+                message = `${info.player.name}, minimum saat limiti olan ${this.options.minimumLimit} saate ulaşamadığı için takımdan atıldı.`;
                 if (player?.warning >= this.options.maximumWarnings) {
                     this.blackList.push(info.steamID);
                     if (this.options.action) {
                         this.options.action ? this.options.action === "AdminBan" ? this.server.rcon.ban(info.player.steamID, this.options.banDuration ? this.options.banDuration : "1D", "Maksimum uyarı sayısına ulaştınız! Destek için discord.blackowls.net , #admin-i̇letişim") : this.server.rcon.execute(`${this.options.action} ${info.player.steamID}`) : null;
                         this.sendDiscordMessage({
-                            embed: {
-                                ...structure,
-                                description: `${info.player.name}, maksimum uyarı sayısına ulaştığı için ${this.options.action ? this.options.action + ' edildi' : '(hiçbir işlem yapılmadı)'}.`,
-                            },
-
+                            content: `${info.player.name}, maksimum uyarı sayısına ulaştığı için ${this.options.action ? this.options.action + ' edildi' : '(hiçbir işlem yapılmadı)'}.`,
                         });
                     }
                 } else {
                     player ? player.warning++ : this.playerCache.push({ steamID: info.steamID, warning: 1 });
                 }
             } else {
-                embed.setDescription(`${info.player.name}, ${playTime} saatlik oyun süresiyle lider olabilecek kadar yeterli oyun süresine sahip.`);
+                message = `${info.player.name}, ${playTime} saatlik oyun süresiyle lider olabilecek kadar yeterli oyun süresine sahip.`;
             }
             this.sendDiscordMessage({
-                embeds: [embed],
+                content: message,
             });
         }
     }
