@@ -157,7 +157,6 @@ export default class SquadBaiting extends DiscordBasePlugin {
         setInterval(async () => {
             if (this.server.players.length < this.options.playerThreshold) return;
             this.verbose(1, `Players: ${this.server.players.length}/${this.options.playerThreshold}`)
-            if (!this.server.rcon.connected) return;
 
             try {
                 const playerRegex = /ID: ([0-9]+) \| Online IDs: EOS: (?<eosID>[0-9a-f]{32}) steam: (?<steamID>\d{17}) \| Name: (?<name>.*?) \| Team ID: (?<teamID>[0-9]+) \| Squad ID: (?<squadID>[0-9]+|N\/A) \| Is Leader: (?<isLeader>True|False) \| Role: (?<role>[^\s]*)/;
@@ -234,7 +233,7 @@ export default class SquadBaiting extends DiscordBasePlugin {
                 oldSquads = [ ...newSquads ];
             } catch (err) {
                 this.verbose(1, 'RCON query failed', err);
-                return;
+                
             }
         }, 5000)
     }
@@ -291,7 +290,7 @@ export default class SquadBaiting extends DiscordBasePlugin {
 
         const activePlayerRules = isEarlySquadBaiting ? [] : this.options.playerRules.filter(r => r.enabled && r.baitingCounter.min <= oldSquad.leader.baitingCounter && r.baitingCounter.max >= oldSquad.leader.baitingCounter).map(r => ({ ...r, type: 'Player' }));
         const activeSquadRules = isEarlySquadBaiting ? [] : this.options.squadRules.filter(r => r.enabled && r.baitingCounter.min <= oldSquad.baitingCounter && r.baitingCounter.max >= oldSquad.baitingCounter).map(r => ({ ...r, type: 'Squad' }));
-        const activeEarlySquadBaitingRules = isEarlySquadBaiting ? this.options.earlySquadBaitingRules.filter(r => /*earlySquadBaitingRulesActive &&*/ r.enabled).map(r => ({ ...r, type: 'Squad' })) : [];
+        const activeEarlySquadBaitingRules = isEarlySquadBaiting ? this.options.earlySquadBaitingRules.filter(r => /* earlySquadBaitingRulesActive && */ r.enabled).map(r => ({ ...r, type: 'Squad' })) : [];
 
         if (isEarlySquadBaiting) {
             const firstLeader = this.squadsLeaderHistory.get(sqUid)[ 0 ];
@@ -303,9 +302,9 @@ export default class SquadBaiting extends DiscordBasePlugin {
         this.verbose(1, 'Triggered SQUAD rules', activeSquadRules.map(r => r.name))
         this.verbose(1, 'Triggered EARLY_SQUAD rules', activeEarlySquadBaitingRules.map(r => r.name))
 
-        for (let r of activeEarlySquadBaitingRules.concat(activePlayerRules).concat(activeSquadRules)) {
+        for (const r of activeEarlySquadBaitingRules.concat(activePlayerRules).concat(activeSquadRules)) {
             if (!r.enabled) continue;
-            for (let a of r.actions.filter(act => act.enabled || act.enabled == undefined)) {
+            for (const a of r.actions.filter(act => act.enabled || act.enabled == undefined)) {
                 const formattedContent = this.formatActionContent(a.content, oldSquad, newSquad);
                 a.formattedContent = formattedContent
                 // this.verbose(1, 'Formatted action content', formattedContent)
@@ -360,6 +359,7 @@ export default class SquadBaiting extends DiscordBasePlugin {
         // this.verbose(1, 'Disconnected', steamID, playerName, info)
         this.resetPlayerCounters(eosID)
     }
+
     async onPlayerConnected(info) {
         if (!info.player) {
             if (info.eosID) {
@@ -386,7 +386,7 @@ export default class SquadBaiting extends DiscordBasePlugin {
     }
 
     formatActionContent(content, oldSquad, newSquad) {
-        if (typeof content == 'number') return content
+        if (typeof content === 'number') return content
         return content
             .replace(/\{squad:teamid\}/ig, oldSquad.teamID)
             .replace(/\{squad:id\}/ig, oldSquad.squadID)
