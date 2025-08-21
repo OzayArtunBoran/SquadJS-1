@@ -40,7 +40,7 @@ export default class SquadLeaderBAN extends DiscordBasePlugin {
                 example: ['76561198000000000']
             },
             maximumWarnings: {
-                required: true,
+                required: false,
                 description: 'The maximum amount of warnings a player can receive before being blacklisted.',
                 default: 3,
                 example: 3
