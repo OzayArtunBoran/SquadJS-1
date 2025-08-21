@@ -55,6 +55,10 @@ export default class Rcon extends EventEmitter {
     this.callbackIds = [];
     this.count = 1;
     this.loggedin = false;
+
+    // Pending command queue used during reconnects
+    this.pendingCommands = [];
+    this.ensureConnectedPromise = null;
   }
 
   onPacket(decodedPacket) {
@@ -109,6 +113,34 @@ export default class Rcon extends EventEmitter {
         );
         this.onClose('Unknown Packet');
     }
+  }
+
+  async ensureConnected() {
+    if (this.connected && this.loggedin) return;
+
+    if (!this.ensureConnectedPromise) {
+      this.ensureConnectedPromise = this.connect()
+        .then(() => {
+          // Clear connection promise before flushing queued commands
+          this.ensureConnectedPromise = null;
+          const queue = this.pendingCommands;
+          this.pendingCommands = [];
+          for (const { command, resolve, reject } of queue) {
+            this.execute(command).then(resolve, reject);
+          }
+        })
+        .catch((err) => {
+          this.ensureConnectedPromise = null;
+          const queue = this.pendingCommands;
+          this.pendingCommands = [];
+          for (const { reject } of queue) {
+            reject(err);
+          }
+          throw err;
+        });
+    }
+
+    return this.ensureConnectedPromise;
   }
 
   decodeData(data) {
@@ -291,7 +323,14 @@ export default class Rcon extends EventEmitter {
     });
   }
 
-  execute(command) {
+  async execute(command) {
+    if (this.ensureConnectedPromise) {
+      return new Promise((resolve, reject) => {
+        this.pendingCommands.push({ command, resolve, reject });
+      });
+    }
+
+    await this.ensureConnected();
     return this.write(SERVERDATA_EXECCOMMAND, command);
   }
 
