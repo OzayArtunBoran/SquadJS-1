@@ -128,15 +128,6 @@ export default class SquadLeaderBAN extends DiscordBasePlugin {
   }
 
   async checkSquadLeaders() {
-    if (!this.server.rcon.connected) {
-      try {
-        await this.server.rcon.connect();
-      } catch (err) {
-        this.verbose(1, 'RCON connection failed', err);
-        return;
-      }
-    }
-
     try {
       const players = await this.server.rcon.getListPlayers();
 
