@@ -89,8 +89,8 @@ export default class SquadLeaderBAN extends DiscordBasePlugin {
 
         const connection = await mysql.createConnection({
             host: 'localhost',
-            user: 'poyraz',
-            password: 'Dbr6_xfUcX',
+            user: 'root',
+            password: '',
             database: 'arthursquad'
         });
     
