@@ -97,7 +97,7 @@ export default class SquadLeaderHL extends DiscordBasePlugin {
         this.playerCache = [];
         this.blackList = [];
         this.description = "";
-        this.status = true;
+        this.status = false;
         this.onSquadCreate = this.onSquadCreate.bind(this);
         this.onChatMessage = this.onChatMessage.bind(this);
     }
