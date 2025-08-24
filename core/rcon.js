@@ -238,10 +238,17 @@ export default class Rcon extends EventEmitter {
       // IE, Squad server crash, Squad server shutdown for multiple minutes.
 
       while (this.responseCallbackQueue.length > 0) {
-        this.responseCallbackQueue.shift()(new Error('RCON DISCONNECTED'));
+        const callback = this.responseCallbackQueue.shift();
+        try {
+          callback(new Error('RCON DISCONNECTED'));
+        } catch (err) {
+          Logger.verbose('RCON', 1, err);
+        }
       }
       this.callbackIds = [];
     }
+
+    this.emit('RCON_DISCONNECT');
 
     if (this.autoReconnect) {
       Logger.verbose('RCON', 1, `Sleeping ${this.autoReconnectDelay}ms before reconnecting.`);
